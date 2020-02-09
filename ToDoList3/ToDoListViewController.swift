@@ -18,6 +18,29 @@ class ToDoListViewController: UIViewController {
         toDoTableView.dataSource = self as UITableViewDataSource
         // Do any additional setup after loading the view.
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowDetail"{
+            let destination = segue.destination as! ToDoDetailTableViewController
+            let selectedIndexPath = toDoTableView.indexPathForSelectedRow!
+            destination.toDoItem = toDoArray[selectedIndexPath.row]
+        }else{
+            if let selectedIndexPath = toDoTableView.indexPathForSelectedRow {
+                toDoTableView.deselectRow(at: selectedIndexPath, animated: true )
+            }
+        }
+    }
+    @IBAction func unwindFromDetail(segue: UIStoryboardSegue){
+        let source = segue.source as! ToDoDetailTableViewController
+        if let selectedIndexPath = toDoTableView.indexPathForSelectedRow{
+            toDoArray[selectedIndexPath.row] = source.toDoItem
+            toDoTableView.reloadRows(at: [selectedIndexPath], with: .automatic)
+        }else{
+            let newIndexPath = IndexPath(row: toDoArray.count, section: 0)
+            toDoArray.append(source.toDoItem)
+            toDoTableView.insertRows(at: [newIndexPath], with: .bottom)
+            toDoTableView.scrollToRow(at: newIndexPath, at: .bottom, animated: true)
+        }
+    }
 }
 extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
