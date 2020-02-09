@@ -43,6 +43,11 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="gba-Zl-xpL">
+                        <barButtonItem key="leftBarButtonItem" title="Edit" id="W4J-cw-sFW">
+                            <connections>
+                                <action selector="editButtonPressed:" destination="BYZ-38-t0r" id="TjQ-qf-W7p"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="CiE-pv-3d0">
                             <connections>
                                 <segue destination="zZ1-43-adA" kind="presentation" identifier="AddDetail" id="hXG-eK-dOg"/>
@@ -50,6 +55,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="addBarButton" destination="CiE-pv-3d0" id="pHf-tc-rav"/>
                         <outlet property="toDoTableView" destination="Edc-My-Gki" id="Pgb-w0-oMI"/>
                     </connections>
                 </viewController>
@@ -62,7 +68,7 @@
             <objects>
                 <tableViewController id="Xnk-hK-lHu" customClass="ToDoDetailTableViewController" customModule="ToDoList3" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="dyw-fb-GaG">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <sections>
@@ -76,7 +82,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mg1-x2-Is5">
-                                                    <rect key="frame" x="17" y="5" width="287" height="34"/>
+                                                    <rect key="frame" x="16" y="5" width="287" height="34"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
@@ -196,6 +202,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="g3G-Xp-TCu"/>
+        <segue reference="7py-l7-pAt"/>
     </inferredMetricsTieBreakers>
 </document>
