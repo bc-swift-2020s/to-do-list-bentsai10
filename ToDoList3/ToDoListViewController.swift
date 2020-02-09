@@ -9,11 +9,14 @@
 import UIKit
 
 class ToDoListViewController: UIViewController {
+    
+    var toDoItems:[ToDoItem] = []
 
     @IBOutlet weak var toDoTableView: UITableView!
     @IBOutlet weak var addBarButton: UIBarButtonItem!
     
-    var toDoArray = ["Graduate", "Get a Job", "Get Married", "Have Kids"]
+//    var toDoArray = ["Graduate", "Get a Job", "Get Married", "Have Kids"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         toDoTableView.delegate = self as UITableViewDelegate
@@ -24,7 +27,7 @@ class ToDoListViewController: UIViewController {
         if segue.identifier == "ShowDetail"{
             let destination = segue.destination as! ToDoDetailTableViewController
             let selectedIndexPath = toDoTableView.indexPathForSelectedRow!
-            destination.toDoItem = toDoArray[selectedIndexPath.row]
+            destination.toDoItem = toDoItems[selectedIndexPath.row]
         }else{
             if let selectedIndexPath = toDoTableView.indexPathForSelectedRow {
                 toDoTableView.deselectRow(at: selectedIndexPath, animated: true )
@@ -34,11 +37,11 @@ class ToDoListViewController: UIViewController {
     @IBAction func unwindFromDetail(segue: UIStoryboardSegue){
         let source = segue.source as! ToDoDetailTableViewController
         if let selectedIndexPath = toDoTableView.indexPathForSelectedRow{
-            toDoArray[selectedIndexPath.row] = source.toDoItem
+            toDoItems[selectedIndexPath.row] = source.toDoItem
             toDoTableView.reloadRows(at: [selectedIndexPath], with: .automatic)
         }else{
-            let newIndexPath = IndexPath(row: toDoArray.count, section: 0)
-            toDoArray.append(source.toDoItem)
+            let newIndexPath = IndexPath(row: toDoItems.count, section: 0)
+            toDoItems.append(source.toDoItem)
             toDoTableView.insertRows(at: [newIndexPath], with: .bottom)
             toDoTableView.scrollToRow(at: newIndexPath, at: .bottom, animated: true)
         }
@@ -59,26 +62,26 @@ class ToDoListViewController: UIViewController {
 }
 extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("numberofRowsInSection was just called. Returning\(toDoArray.count) ")
-        return toDoArray.count
+        print("numberofRowsInSection was just called. Returning\(toDoItems.count) ")
+        return toDoItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("cellforRowAt was just called for indexPath.row = \(indexPath.row) which is the cell containing \(toDoArray[indexPath.row])")
+        print("cellforRowAt was just called for indexPath.row = \(indexPath.row) which is the cell containing \(toDoItems[indexPath.row])")
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = toDoArray[indexPath.row]
+        cell.textLabel?.text = toDoItems[indexPath.row].name
         return cell
     }
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete{
-            toDoArray.remove(at: indexPath.row)
+            toDoItems.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove = toDoArray[sourceIndexPath.row]
-        toDoArray.remove(at: sourceIndexPath.row)
-        toDoArray.insert(itemToMove, at: destinationIndexPath.row)
+        let itemToMove = toDoItems[sourceIndexPath.row]
+        toDoItems.remove(at: sourceIndexPath.row)
+        toDoItems.insert(itemToMove, at: destinationIndexPath.row)
     }
     
 }
