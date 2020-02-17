@@ -21,8 +21,33 @@ class ToDoListViewController: UIViewController {
         super.viewDidLoad()
         toDoTableView.delegate = self as UITableViewDelegate
         toDoTableView.dataSource = self as UITableViewDataSource
+        loadData() 
         // Do any additional setup after loading the view.
     }
+    func loadData(){
+        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let documentURL = directoryURL.appendingPathComponent("todos").appendingPathExtension("json")
+        guard let data = try?Data(contentsOf: documentURL)else{return}
+        let jsonDecoder = JSONDecoder()
+        do{
+            toDoItems = try jsonDecoder.decode(Array<ToDoItem>.self, from: data)
+            toDoTableView.reloadData()
+        }catch{
+            print("Error!")
+        }
+    }
+    func saveData(){
+        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let documentURL = directoryURL.appendingPathComponent("todos").appendingPathExtension("json")
+        let jsonEncoder = JSONEncoder()
+        let data = try?jsonEncoder.encode(toDoItems )
+        do{
+            try data?.write(to: documentURL, options: .noFileProtection)
+        }catch{
+            print("Error!")
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowDetail"{
             let destination = segue.destination as! ToDoDetailTableViewController
@@ -45,6 +70,7 @@ class ToDoListViewController: UIViewController {
             toDoTableView.insertRows(at: [newIndexPath], with: .bottom)
             toDoTableView.scrollToRow(at: newIndexPath, at: .bottom, animated: true)
         }
+        saveData()
     }
     @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
         if toDoTableView.isEditing{
@@ -76,12 +102,14 @@ extension ToDoListViewController: UITableViewDelegate, UITableViewDataSource{
         if editingStyle == .delete{
             toDoItems.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+            saveData()
         }
     }
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let itemToMove = toDoItems[sourceIndexPath.row]
         toDoItems.remove(at: sourceIndexPath.row)
         toDoItems.insert(itemToMove, at: destinationIndexPath.row)
+        saveData()
     }
     
 }
