@@ -6,11 +6,11 @@
 //  Copyright © 2020 Ben Tsai. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import UserNotifications
 
 struct LocalNotificationManager {
-    static func authorizeLocalNotifications(){
+    static func authorizeLocalNotifications(viewController: UIViewController){
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             guard error == nil else{
                 print("error")
@@ -20,10 +20,30 @@ struct LocalNotificationManager {
                 print("granted")
             }else{
                 print("denied")
-                //TODO: Put an alert here
+                DispatchQueue.main.async {
+                    viewController.oneButtonAlert(title: "User Has Not Allowed Notifications", message: "To receive alerts for reminders, open the Settings app, select To Do List > Notifications > Allow Notifications")
+                }
             }
         }
     }
+    
+    static func isAuthorized(completed: @escaping (Bool)->()){
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            guard error == nil else{
+                print("error")
+                completed(false)
+                return
+            }
+            if granted {
+                print("granted")
+                completed(true)
+            }else{
+                print("denied")
+                completed(false)
+            }
+        }
+    }
+    
     static func setCalendarNotification(title:String,subtitle: String, body:String, badgeNumber: NSNumber?, sound: UNNotificationSound, date: Date) -> String{
         //create content
         let content = UNMutableNotificationContent()
