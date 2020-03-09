@@ -7,21 +7,10 @@
 //
 
 import Foundation
+import UserNotifications
  
  class ToDoItems{
     var itemsArray: [ToDoItem] = []
-    
-    func saveData(){
-        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let documentURL = directoryURL.appendingPathComponent("todos").appendingPathExtension("json")
-        let jsonEncoder = JSONEncoder()
-        let data = try?jsonEncoder.encode(itemsArray)
-        do{
-            try data?.write(to: documentURL, options: .noFileProtection)
-        }catch{
-            print("Error!")
-        }
-    }
     
     func loadData(completed: @escaping () -> ()){
         let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -35,5 +24,33 @@ import Foundation
             print("Error!")
         }
         completed()
+    }
+    
+    func saveData(){
+        let directoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let documentURL = directoryURL.appendingPathComponent("todos").appendingPathExtension("json")
+        let jsonEncoder = JSONEncoder()
+        let data = try?jsonEncoder.encode(itemsArray)
+        do{
+            try data?.write(to: documentURL, options: .noFileProtection)
+        }catch{
+            print("Error!")
+        }
+        setNotifications()
+    }
+    
+    
+    func setNotifications(){
+        guard itemsArray.count>0 else{
+            return
+        }
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        for index in 0..<itemsArray.count {
+            if itemsArray[index].reminderSet{
+                let toDoItem = itemsArray[index]
+                itemsArray[index].notificationID = LocalNotificationManager.setCalendarNotification(title: toDoItem.name, subtitle: "", body: toDoItem.notes, badgeNumber: nil, sound: .default, date: toDoItem.date)
+            }
+        }
     }
  }
